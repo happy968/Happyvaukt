@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register | GameVault</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* your styles here */
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>📝 Register at GameVault</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <br />
+    <button onclick="register()">Register</button>
+    <button onclick="window.location.href='login.html'">Go to Login</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmqpkxO9kffkNXb_Xpvw5oWEBAibXiXFQ",
+      authDomain: "gamevault-ac39e.firebaseapp.com",
+      projectId: "gamevault-ac39e",
+      storageBucket: "gamevault-ac39e.appspot.com",
+      messagingSenderId: "156661158238",
+      appId: "1:156661158238:web:907ef06d8b46f3887ffcfc"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Listen to auth state changes
+    auth.onAuthStateChanged(user => {
+      if(user){
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    function register() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .catch(e => alert("❌ " + e.message));
+    }
+  </script>
+
+</body>
+</html>
