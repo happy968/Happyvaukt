@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+  <title>Register | GameVault</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Register | GameVault</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #0d0d0d;
       color: white;
       text-align: center;
@@ -51,10 +51,12 @@
     <button onclick="window.location.href='login.html'">Go to Login</button>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
 
+  <script>
+    // Initialize Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBmqpkxO9kffkNXb_Xpvw5oWEBAibXiXFQ",
       authDomain: "gamevault-ac39e.firebaseapp.com",
@@ -64,33 +66,40 @@
       appId: "1:156661158238:web:907ef06d8b46f3887ffcfc"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    async function register() {
-      alert("📩 Register button clicked!");
+    function register() {
+      alert("Step 1: Register button clicked");
+
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
-      if (!email || !password) {
-        alert("❗ Please enter both email and password.");
+      if (!email) {
+        alert("Step 2: Email is empty");
+        return;
+      }
+
+      if (!password) {
+        alert("Step 3: Password is empty");
         return;
       }
 
       if (password.length < 6) {
-        alert("❗ Password must be at least 6 characters.");
+        alert("Step 4: Password too short");
         return;
       }
 
-      alert("📤 Attempting to register...");
+      alert("Step 5: Calling Firebase createUserWithEmailAndPassword");
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        alert("✅ Registered successfully!");
-        window.location.href = 'dashboard.html';
-      } catch (error) {
-        alert("❌ Registration failed:\n" + error.message);
-      }
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          alert("Step 6: Registration successful!");
+          window.location.href = 'dashboard.html';
+        })
+        .catch((error) => {
+          alert("Step 7: Registration failed:\n" + error.message);
+        });
     }
   </script>
 
