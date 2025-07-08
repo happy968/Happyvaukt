@@ -50,11 +50,13 @@
     <button onclick="register()">Register</button>
   </div>
 
-  <!-- Firebase -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
 
   <script>
+    // ✅ Your Firebase config (replace only if you start new project)
     const firebaseConfig = {
       apiKey: "AIzaSyBmqpkxO9kffkNXb_Xpvw5oWEBAibXiXFQ",
       authDomain: "gamevault-ac39e.firebaseapp.com",
@@ -63,29 +65,49 @@
       messagingSenderId: "156661158238",
       appId: "1:156661158238:web:907ef06d8b46f3887ffcfc"
     };
+
+    // ✅ Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
+    // ✅ Login function
     function login() {
-      const email = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
-      auth.signInWithEmailAndPassword(email, pass)
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      auth.signInWithEmailAndPassword(email, password)
         .then(() => {
           alert("✅ Logged in!");
           window.location.href = "dashboard.html";
         })
-        .catch((e) => alert("❌ " + e.message));
+        .catch((error) => {
+          alert("❌ " + error.message);
+        });
     }
 
+    // ✅ Register function (with Firestore user role)
     function register() {
-      const email = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
-      auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+
+          // Save user data in Firestore
+          db.collection("users").doc(user.uid).set({
+            email: email,
+            role: "user",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
           alert("✅ Account created!");
           window.location.href = "dashboard.html";
         })
-        .catch((e) => alert("❌ " + e.message));
+        .catch((error) => {
+          alert("❌ " + error.message);
+        });
     }
   </script>
 
