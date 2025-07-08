@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard | GameVault</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      background: #0e0e0e;
+      color: #fff;
+      padding: 40px;
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 10px;
+    }
+    input, textarea {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      padding: 10px 20px;
+      background: #00ffd5;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>👋 Welcome to Your Dashboard</h2>
+    <p id="userEmail">Checking login...</p>
+
+    <h3>📦 Post a New Game Account</h3>
+    <input type="text" id="gameName" placeholder="Game (e.g. PUBG)">
+    <input type="text" id="rank" placeholder="Rank (e.g. Conqueror)">
+    <input type="text" id="region" placeholder="Region (e.g. Asia)">
+    <input type="text" id="price" placeholder="Price in USD">
+    <textarea id="details" rows="4" placeholder="Details, skins, etc..."></textarea>
+    <button onclick="postAccount()">Post Account</button>
+    <p id="statusMsg"></p>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmqpkxO9kffkNXb_Xpvw5oWEBAibXiXFQ",
+      authDomain: "gamevault-ac39e.firebaseapp.com",
+      projectId: "gamevault-ac39e",
+      storageBucket: "gamevault-ac39e.appspot.com",
+      messagingSenderId: "156661158238",
+      appId: "1:156661158238:web:907ef06d8b46f3887ffcfc",
+      databaseURL: "https://gamevault-ac39e-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    // Check user
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('userEmail').textContent = "Logged in as: " + user.email;
+      } else {
+        alert("You're not logged in!");
+        window.location.href = "login.html";
+      }
+    });
+
+    // Post listing
+    function postAccount() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const gameName = document.getElementById("gameName").value;
+      const rank = document.getElementById("rank").value;
+      const region = document.getElementById("region").value;
+      const price = document.getElementById("price").value;
+      const details = document.getElementById("details").value;
+
+      if (!gameName || !price) {
+        alert("Game name and price are required.");
+        return;
+      }
+
+      const postRef = db.ref("listings").push();
+      postRef.set({
+        uid: user.uid,
+        email: user.email,
+        game: gameName,
+        rank: rank,
+        region: region,
+        price: price,
+        details: details,
+        postedAt: new Date().toISOString()
+      });
+
+      document.getElementById("statusMsg").textContent = "✅ Posted!";
+    }
+  </script>
+
+</body>
+</html>
