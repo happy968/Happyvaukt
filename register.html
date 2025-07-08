@@ -61,29 +61,35 @@
       messagingSenderId: "156661158238",
       appId: "1:156661158238:web:907ef06d8b46f3887ffcfc"
     };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     function register() {
+      alert("📩 Register button clicked!"); // Step 1 debug
+
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
       if (!email || !password) {
-        alert("Please enter both email and password.");
-        return;
-      }
-      if (password.length < 6) {
-        alert("Password must be at least 6 characters.");
+        alert("❗ Please enter both email and password.");
         return;
       }
 
+      if (password.length < 6) {
+        alert("❗ Password must be at least 6 characters.");
+        return;
+      }
+
+      alert("📤 Attempting to register..."); // Step 2 debug
+
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          alert("✅ Account created successfully!");
+          alert("✅ Registered successfully!");
           window.location.href = 'dashboard.html';
         })
         .catch((error) => {
-          alert("❌ Registration failed: " + error.message);
+          alert("❌ Registration failed:\n" + error.message);
         });
     }
   </script>
