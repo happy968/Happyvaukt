@@ -28,6 +28,21 @@
     .listing strong {
       color: #00ffd5;
     }
+    .listing form {
+      margin-top: 10px;
+    }
+    .listing input[type="submit"] {
+      padding: 8px 15px;
+      background: #00ffd5;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .listing a {
+      color: #00ffd5;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -52,11 +67,10 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     const container = document.getElementById("listings");
 
     db.ref("listings").on("value", (snapshot) => {
-      container.innerHTML = ""; // clear old
+      container.innerHTML = "";
       const data = snapshot.val();
       if (data) {
         Object.values(data).reverse().forEach(item => {
@@ -69,6 +83,17 @@
             <p><strong>Price:</strong> $${item.price}</p>
             <p><strong>Details:</strong> ${item.details}</p>
             <p><strong>Seller:</strong> ${item.email}</p>
+
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+              <input type="hidden" name="cmd" value="_xclick">
+              <input type="hidden" name="business" value="hashmatk409@gmail.com">
+              <input type="hidden" name="item_name" value="${item.game} Account by ${item.email}">
+              <input type="hidden" name="amount" value="${item.price || 50}">
+              <input type="hidden" name="currency_code" value="USD">
+              <input type="submit" value="Buy Now with PayPal">
+            </form>
+
+            <p style="font-size: 0.85em;">📩 After payment, contact <a href="https://wa.me/966596564900" target="_blank">WhatsApp</a> for account delivery.</p>
           `;
           container.appendChild(box);
         });
