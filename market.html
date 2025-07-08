@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marketplace | GameVault</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      background: #0b0b0b;
+      color: white;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .listing {
+      background: #1b1b1b;
+      margin: 15px auto;
+      max-width: 600px;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #00ffd5;
+    }
+    .listing p {
+      margin: 6px 0;
+    }
+    .listing strong {
+      color: #00ffd5;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎮 GameVault Marketplace</h2>
+  <div id="listings"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmqpkxO9kffkNXb_Xpvw5oWEBAibXiXFQ",
+      authDomain: "gamevault-ac39e.firebaseapp.com",
+      projectId: "gamevault-ac39e",
+      storageBucket: "gamevault-ac39e.appspot.com",
+      messagingSenderId: "156661158238",
+      appId: "1:156661158238:web:907ef06d8b46f3887ffcfc",
+      databaseURL: "https://gamevault-ac39e-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const container = document.getElementById("listings");
+
+    db.ref("listings").on("value", (snapshot) => {
+      container.innerHTML = ""; // clear old
+      const data = snapshot.val();
+      if (data) {
+        Object.values(data).reverse().forEach(item => {
+          const box = document.createElement("div");
+          box.className = "listing";
+          box.innerHTML = `
+            <p><strong>Game:</strong> ${item.game}</p>
+            <p><strong>Rank:</strong> ${item.rank || 'N/A'}</p>
+            <p><strong>Region:</strong> ${item.region || 'N/A'}</p>
+            <p><strong>Price:</strong> $${item.price}</p>
+            <p><strong>Details:</strong> ${item.details}</p>
+            <p><strong>Seller:</strong> ${item.email}</p>
+          `;
+          container.appendChild(box);
+        });
+      } else {
+        container.innerHTML = "<p>No listings yet.</p>";
+      }
+    });
+  </script>
+
+</body>
+</html>
